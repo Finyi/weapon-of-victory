@@ -140,6 +140,57 @@ hr {
     color: var(--text-main);
     transition: color 0.3s ease;
 }
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    outline: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    gap: 5px;
+}
+.burger-menu span{
+    width: 25px;
+    height: 3px;
+    gap: 10px;
+    background: var(--accent-green);
+}
+#modalMobile{
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 80%;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    z-index: 999;
+    animation: opacity 0.2s ease-in-out;
+}
+#modalMobile ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 80px;
+    gap: 15px;
+    flex: 1;
+}
+#modalMobile .navCatalogContent {
+    transform: translateY(-25%);
+}
+#modalMobile .catalog-list-ground, .catalog-list-airforce {
+    font-size: clamp(8pt, 2vw, 12pt);
+}
+#modalMobile .catalog-list-ground ul, .catalog-list-airforce ul {
+    position: absolute; 
+    background-color: #16161627;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    padding: 15px 15px;
+    border-radius: 9px;
+    font-size: clamp(8pt, 2vw, 9pt);
+    display: none;
+    animation: opacity 0.3s ease;
+}
 .hero-section {
     flex-grow: 1;
     display: flex;
@@ -369,7 +420,7 @@ hr {
     position: absolute;
     right: 18px;
     top: 10px;
-    background: rgba(0, 0, 0, 0.016);
+    background: none;
     border: none;
     color: var(--text-main);
     font-size: 23pt;
@@ -662,6 +713,9 @@ hr {
 @media (max-width: 768px) {
     .nav-links { 
         display: none; 
+    }
+    .burger-menu{
+        display: flex;
     }
     .tech-footer {
         flex-direction: column; 

@@ -3,7 +3,7 @@ const buttons = document.querySelectorAll('.catalogBtn');
 buttons.forEach(function(button) {
   const content = button.querySelector('.navCatalogContent');
   button.addEventListener('click', function() {
-    if (content.style.display === 'none' || content.style.display === '') {
+    if (content.style.display === 'none' || content.style.display === ''){
       content.style.display = 'block';
     } else {
       content.style.display = 'none';
@@ -18,7 +18,18 @@ document.addEventListener('click', function(event) {
     }
   });
 });
-// slider
+
+const burger = document.querySelector('#burgerMenu');
+burger.addEventListener('click', function(){
+  const burgerContent = document.querySelector('#modalMobile');
+  if (burgerContent.style.display === 'none'){
+    burgerContent.style.display = 'block';
+  } else {
+    burgerContent.style.display = 'none';
+  }
+}) 
+
+// slider 
 const slider = document.querySelector('.slider');
 if (slider) {
   const slides = document.querySelector('.slides');
@@ -38,4 +49,4 @@ if (slider) {
   }
 
   setInterval(nextSlide, slideInterval);
-}
+};
