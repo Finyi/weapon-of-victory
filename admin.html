@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Адмін-панель | Зброя перемоги</title>
+</head>
+
+<body>
+  <div class="background-image">
+    <img src="src/img/bg/F-16AM_UA.jpg">
+  </div>
+
+  <header class="top-nav">
+    <div class="logo">
+      <a href="index.html"><img src="src/img/flags/Flag_of_Ukraine.svg"></a>
+    </div>
+  </header>
+
+  <main>
+    <div class="admin-container">
+      <h1>Адмін-панель</h1>
+      <form class="admin-form" id="equipmentForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="equipmentId">ID</label>
+            <input type="text" id="equipmentId" placeholder="leopard-2a6">
+          </div>
+          <div class="form-group">
+            <label for="name">Назва</label>
+            <input type="text" id="name" placeholder="Leopard 2A6">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="type">Тип</label>
+            <input type="text" id="type" placeholder="Основний бойовий танк">
+          </div>
+          <div class="form-group">
+            <label for="category">Категорія</label>
+            <select id="category">
+              <option value="">Виберіть категорію</option>
+              <option value="tanks">Танки</option>
+              <option value="ifv">БМП</option>
+              <option value="crv">БРМ</option>
+              <option value="apc">БТР</option>
+              <option value="mrap">Бронеавтомобілі / MRAP</option>
+              <option value="artillery-and-mlrs">Артилерія та РЗСВ</option>
+              <option value="srbm">(О)ТРК</option>
+              <option value="radar">РЛС Станції</option>
+              <option value="air-defense">ППО</option>
+              <option value="fighters">Винищувачі</option>
+              <option value="strike-fighters">Ударні літаки</option>
+              <option value="reconnaissance-aircrafts">Розвідувальні літаки</option>
+              <option value="transport-aircrafts">Військово-транспортні літаки</option>
+              <option value="helicopters">Гелікоптери</option>
+              <option value="uav">БПЛА</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="manufacturer">Виробник</label>
+            <input type="text" id="manufacturer" placeholder="Німеччина">
+          </div>
+          <div class="form-group">
+            <label for="manufacturerFlag">ISO прапора</label>
+            <input type="text" id="manufacturerFlag" placeholder="de">
+          </div>
+        </div>
+        <h2>Зображення</h2>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="image">Перше зображення</label>
+            <input type="text" id="image" placeholder="Посилання">
+          </div>
+          <div class="form-group">
+            <label for="image2">Друге зображення</label>
+            <input type="text" id="image2" placeholder="Посилання">
+          </div>
+          <div class="form-group">
+            <label for="image3">Третє зображення</label>
+            <input type="text" id="image3" placeholder="Посилання">
+          </div>
+        </div>
+        <h2>Специфікація</h2>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="weight">Вага</label>
+            <input type="text" id="weight" placeholder="62 т">
+          </div>
+          <div class="form-group">
+            <label for="crew">Екіпаж</label>
+            <input type="text" id="crew" placeholder="4 особи">
+          </div>
+          <div class="form-group">
+            <label for="engine">Двигун</label>
+            <input type="text" id="engine" placeholder="12-циліндровий дизельний">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="power">Потужність (к.с.)</label>
+            <input type="text" id="power" placeholder="1500 к.с.">
+          </div>
+          <div class="form-group">
+            <label for="maxSpeed">Максимальна швидкість</label>
+            <input type="text" id="maxSpeed" placeholder="72 км/год">
+          </div>
+          <div class="form-group">
+            <label for="caliber">Калібр</label>
+            <input type="text" id="caliber" placeholder="155-мм">
+          </div>
+          <div class="form-group">
+            <label for="rateOfFire">Пострілів за хв.</label>
+            <input type="text" id="rateOfFire" placeholder="5-6 пострілів/хв">
+          </div>
+          <div class="form-group">
+            <label for="range">Дальність</label>
+            <input type="text" id="range" placeholder="500 км">
+          </div>
+          <div class="form-group">
+            <label for="guidance">Система наведення</label>
+            <input type="text" id="guidance" placeholder="GPS">
+          </div>
+          <div class="form-group">
+            <label for="armament">Озброєння (снаряди, ракети та ін.)</label>
+            <input type="text" id="armament" placeholder="...">
+          </div>
+          <div class="form-group">
+            <label for="numbermissiles">Макс. Кількість споряджених ракет</label>
+            <input type="text" id="numbermissiles" placeholder="12 ракет">
+          </div>
+          <div class="form-group">
+            <label for="radarRange">Дальність РЛС</label>
+            <input type="text" id="radarRange" placeholder="10 км">
+          </div>
+          <div class="form-group">
+            <label for="frequencyRange">Діапазон частот</label>
+            <input type="text" id="frequencyRange" placeholder="C-діапазон">
+          </div>
+          <div class="form-group">
+            <label for="maxHeight">Макс. висота цілі</label>
+            <input type="text" id="maxHeight" placeholder="100 км">
+          </div>
+          <div class="form-group">
+            <label for="maxSpeedTarget">Макс. швидкість цілі</label>
+            <input type="text" id="maxSpeedTarget" placeholder="1000 км/год">
+          </div>
+          <div class="form-group">
+            <label for="typeTarget">Тип цілі</label>
+            <input type="text" id="typeTarget" placeholder="Літаки">
+          </div>
+          <div class="form-group">
+            <label for="combatRadius">Бойовий радіус (км)</label>
+            <input type="text" id="combatRadius" placeholder="200 км">
+          </div>
+          <div class="form-group">
+            <label for="radarType">Тип РЛС</label>
+            <input type="text" id="radarType" placeholder="...">
+          </div>
+          <div class="form-group">
+            <label for="maxCombatLoad">Макс. бойове навантаження (кг)</label>
+            <input type="text" id="maxCombatLoad" placeholder="5600 кг">
+          </div>
+        </div>
+        <h2>Опис</h2>
+        <div class="form-group">
+          <label for="description">Опис техніки</label>
+          <textarea id="description"></textarea>
+        </div>
+        <h2>Оператори</h2>
+        <div class="form-group">
+          <label for="operators">JSON + ISO операторів</label>
+          <textarea id="operators" placeholder='{"name": "Україна", "flag": "ua"}
+{"name": "США", "flag": "us"}
+'></textarea>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">JSON</button>
+        </div>
+      </form>
+
+      <div class="result-section" id="resultSection">
+        <h2>JSON:</h2>
+        <div class="json-output" id="jsonOutput"></div>
+        <button class="btn btn-copy" onclick="copyToClipboard()">Скопіювати</button>
+      </div>
+
+    </div>
+  </main>
+
+  <hr class="separator">
+  <footer class="tech-footer">
+    <div class="footer-info">
+      <span>&copy; 2026 finy</span>
+      <span class="footer-separator">|</span>
+    </div>
+    <div class="footer-author">
+      <span>Розробка та підтримка системи</span>
+    </div>
+  </footer>
+<script src="src/js/adm-panel.js"></script>
+</body>
+
+</html>
