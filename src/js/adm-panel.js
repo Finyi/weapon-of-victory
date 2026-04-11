@@ -1,169 +1,194 @@
-    async function loadEquipmentList() {
-      try {
-        console.log('Завантажуємо список техніки...');
-        const response = await fetch('data/equipment.json');
-        console.log('Відповідь отримано:', response.status, response.statusText);
+const formFieldIds = [
+  'equipmentId', 'name', 'type', 'category', 'manufacturer', 'manufacturerFlag',
+  'image', 'image2', 'image3', 'description', 'operators'
+];
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+const specFieldIds = [
+  'weight', 'crew', 'engine', 'power', 'maxSpeed', 'caliber', 'rateOfFire',
+  'range', 'guidance', 'armament', 'numbermissiles', 'radarRange', 'frequencyRange',
+  'maxHeight', 'maxSpeedTarget', 'typeTarget', 'combatRadius', 'radarType', 'maxCombatLoad'
+];
 
-        const data = await response.json();
-        console.log('Дані завантажені:', data);
+function getValue(id) {
+  const element = document.getElementById(id);
+  return element ? element.value.trim() : '';
+}
 
-        const tbody = document.getElementById('equipmentTableBody');
+function renderTableBody(items) {
+  const tbody = document.getElementById('equipmentTableBody');
+  if (!tbody) return;
 
-        if (!data.equipment || data.equipment.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5">Техніку не знайдено</td></tr>';
-          return;
-        }
+  if (!items || items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5">Техніку не знайдено</td></tr>';
+    return;
+  }
 
-        tbody.innerHTML = data.equipment.map(item => `
-            <tr>
-                <td>${item.id}</td>
-                <td>${item.name}</td>
-                <td>${item.type}</td>
-                <td>${item.category}</td>
-                <td>${item.manufacturer}</td>
-            </tr>
-        `).join('');
+  tbody.innerHTML = items.map(item => `
+    <tr>
+      <td>${item.id}</td>
+      <td>${item.name}</td>
+      <td>${item.type}</td>
+      <td>${item.category}</td>
+      <td>${item.manufacturer}</td>
+    </tr>
+  `).join('');
+}
 
-        console.log(`Завантажено ${data.equipment.length} техніки`);
-
-      } catch (error) {
-        console.error('Помилка завантаження:', error);
-        const tbody = document.getElementById('equipmentTableBody');
-        tbody.innerHTML = `<tr><td colspan="5" style="color: red;">Помилка: ${error.message}<br>Відкрийте файл через локальний сервер!</td></tr>`;
-      }
+async function loadEquipmentList() {
+  try {
+    const response = await fetch('data/equipment.json');
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    document.getElementById('equipmentForm').addEventListener('submit', (e) => {
-      e.preventDefault();
+    const data = await response.json();
+    renderTableBody(data.equipment);
+  } catch (error) {
+    console.error('Помилка завантаження:', error);
+    renderTableBody([]);
+    const tbody = document.getElementById('equipmentTableBody');
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color: red;">Помилка: ${error.message}<br>Відкрийте файл через локальний сервер!</td></tr>`;
+    }
+  }
+}
 
-      const equipment = {
-        id: document.getElementById('equipmentId').value,
-        name: document.getElementById('name').value,
-        type: document.getElementById('type').value,
-        category: document.getElementById('category').value,
-        manufacturer: document.getElementById('manufacturer').value,
-        manufacturerFlag: document.getElementById('manufacturerFlag').value,
-      };
+function collectSpecs() {
+  return specFieldIds.reduce((specs, id) => {
+    const value = getValue(id);
+    if (value) {
+      specs[id] = value;
+    }
+    return specs;
+  }, {});
+}
 
-      console.log('База:', equipment);
+function parseOperators(text) {
+  if (!text) return [];
+  return text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => JSON.parse(line));
+}
 
+function buildEquipmentObject() {
+  const equipment = {
+    id: getValue('equipmentId'),
+    name: getValue('name'),
+    type: getValue('type'),
+    category: getValue('category'),
+    manufacturer: getValue('manufacturer'),
+    manufacturerFlag: getValue('manufacturerFlag')
+  };
 
-      if (!equipment.id || !equipment.name || !equipment.type || !equipment.category || !equipment.manufacturer || !equipment.manufacturerFlag) {
-        alert('Потрібно заповнити id, назву, тип, категорію та виробника');
-        return;
-      }
+  ['image', 'image2', 'image3'].forEach(id => {
+    const value = getValue(id);
+    if (value) {
+      equipment[id] = value;
+    }
+  });
 
-      if (document.getElementById('image').value) {
-        equipment.image = document.getElementById('image').value;
-      }
-      if (document.getElementById('image2').value) {
-        equipment.image2 = document.getElementById('image2').value;
-      }
-      if (document.getElementById('image3').value) {
-        equipment.image3 = document.getElementById('image3').value;
-      }
+  const specs = collectSpecs();
+  if (Object.keys(specs).length > 0) {
+    equipment.specs = specs;
+  }
 
-      const specs = {};
-      if (document.getElementById('weight').value) specs.weight = document.getElementById('weight').value;
-      if (document.getElementById('crew').value) specs.crew = document.getElementById('crew').value;
-      if (document.getElementById('engine').value) specs.engine = document.getElementById('engine').value;
-      if (document.getElementById('power').value) specs.power = document.getElementById('power').value;
-      if (document.getElementById('maxSpeed').value) specs.maxSpeed = document.getElementById('maxSpeed').value;
-      if (document.getElementById('caliber').value) specs.caliber = document.getElementById('caliber').value;
-      if (document.getElementById('rateOfFire').value) specs.rateOfFire = document.getElementById('rateOfFire').value;
-      if (document.getElementById('range').value) specs.range = document.getElementById('range').value;
-      if (document.getElementById('guidance').value) specs.guidance = document.getElementById('guidance').value;
-      if (document.getElementById('armament').value) specs.armament = document.getElementById('armament').value;
-      if (document.getElementById('numbermissiles').value) specs.numbermissiles = document.getElementById('numbermissiles').value;
-      if (document.getElementById('radarRange').value) specs.radarRange = document.getElementById('radarRange').value;
-      if (document.getElementById('frequencyRange').value) specs.frequencyRange = document.getElementById('frequencyRange').value;
-      if (document.getElementById('maxHeight').value) specs.maxHeight = document.getElementById('maxHeight').value;
-      if (document.getElementById('maxSpeedTarget').value) specs.maxSpeedTarget = document.getElementById('maxSpeedTarget').value;
-      if (document.getElementById('typeTarget').value) specs.typeTarget = document.getElementById('typeTarget').value;
-      if (document.getElementById('combatRadius').value) specs.combatRadius = document.getElementById('combatRadius').value;
-      if (document.getElementById('radarType').value) specs.radarType = document.getElementById('radarType').value;
-      if (document.getElementById('maxCombatLoad').value) specs.maxCombatLoad = document.getElementById('maxCombatLoad').value;
+  const description = getValue('description');
+  if (description) {
+    equipment.description = description;
+  }
 
-      if (Object.keys(specs).length > 0) {
-        equipment.specs = specs;
-      }
+  const operatorsText = getValue('operators');
+  if (operatorsText) {
+    equipment.operators = parseOperators(operatorsText);
+  }
 
-      if (document.getElementById('description').value) {
-        equipment.description = document.getElementById('description').value;
-      }
+  return equipment;
+}
 
-      const operatorsText = document.getElementById('operators').value.trim();
-      if (operatorsText) {
-        try {
-          const operators = [];
-          operatorsText.split('\n').forEach(line => {
-            if (line.trim()) {
-              operators.push(JSON.parse(line.trim()));
-            }
-          });
-          if (operators.length > 0) {
-            equipment.operators = operators;
-          }
-        } catch (err) {
-          alert('Перевірте формат');
-          return;
-        }
-      }
+function validateEquipment(equipment) {
+  const required = ['id', 'name', 'type', 'category', 'manufacturer', 'manufacturerFlag'];
+  return required.every(field => equipment[field]);
+}
 
-      const jsonOutput = document.getElementById('jsonOutput');
-      const jsonString = JSON.stringify(equipment, null, 2) + ',';
-      jsonOutput.textContent = jsonString;
+function showResult(jsonString) {
+  const jsonOutput = document.getElementById('jsonOutput');
+  const resultSection = document.getElementById('resultSection');
+  if (!jsonOutput || !resultSection) return;
 
-      console.log('Готовий JSON', jsonString);
+  jsonOutput.textContent = jsonString;
+  resultSection.classList.add('active');
+  resultSection.scrollIntoView({ behavior: 'smooth' });
+}
 
-      document.getElementById('resultSection').classList.add('active');
+function handleFormSubmit(event) {
+  event.preventDefault();
 
-      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+  const equipment = buildEquipmentObject();
+  if (!validateEquipment(equipment)) {
+    alert('Потрібно заповнити id, назву, тип, категорію та виробника');
+    return;
+  }
+
+  try {
+    const jsonString = JSON.stringify(equipment, null, 2) + ',';
+    showResult(jsonString);
+  } catch (error) {
+    console.error('Помилка формування JSON:', error);
+    alert('Сталася помилка при формуванні JSON. Перевірте дані.');
+  }
+}
+
+function copyToClipboard() {
+  const jsonOutput = document.getElementById('jsonOutput');
+  const text = jsonOutput ? jsonOutput.textContent : '';
+  if (!text) return;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Скопійовано');
+    }).catch(err => {
+      console.error('Помилка копіювання:', err);
+      fallbackCopyTextToClipboard(text);
     });
+  } else {
+    fallbackCopyTextToClipboard(text);
+  }
+}
 
-    function copyToClipboard() {
-      const text = document.getElementById('jsonOutput').textContent;
+function fallbackCopyTextToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.top = 0;
+  textArea.style.left = 0;
+  textArea.style.opacity = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
 
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-          alert('Скопійовано');
-        }).catch((err) => {
-          console.error('Помилка копіювання:', err);
-          fallbackCopyTextToClipboard(text);
-        });
-      } else {
-        fallbackCopyTextToClipboard(text);
-      }
-    }
+  try {
+    const successful = document.execCommand('copy');
+    alert(successful ? 'Скопійовано' : 'Помилка при копіюванні');
+  } catch (err) {
+    console.error('Помилка копіювання:', err);
+    alert('Помилка при копіюванні. Виділіть текст вручну і скопіюйте.');
+  }
 
-    function fallbackCopyTextToClipboard(text) {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
+  document.body.removeChild(textArea);
+}
 
-      textArea.style.top = "0";
-      textArea.style.left = "0";
-      textArea.style.position = "fixed";
-      textArea.style.opacity = "0";
+document.addEventListener('DOMContentLoaded', () => {
+  loadEquipmentList();
 
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+  const equipmentForm = document.getElementById('equipmentForm');
+  if (equipmentForm) {
+    equipmentForm.addEventListener('submit', handleFormSubmit);
+  }
 
-      try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-          alert('Скопійовано');
-        } else {
-          alert('Помилка при копіюванні');
-        }
-      } catch (err) {
-        console.error('Помилка копіювання:', err);
-        alert('Помилка при копіюванні. Виділіть текст вручну і скопіюйте.');
-      }
-
-      document.body.removeChild(textArea);
-    }
+  const copyButton = document.getElementById('copyButton');
+  if (copyButton) {
+    copyButton.addEventListener('click', copyToClipboard);
+  }
+});

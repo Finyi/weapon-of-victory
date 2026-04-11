@@ -21,7 +21,7 @@ function getCountryFlagUrl(code) {
     return `https://flagcdn.com/w40/${normalized}.png`;
 }
 
-const validCategories = [
+const categories = [
     'all',
     'tanks',
     'ifv',
@@ -39,6 +39,31 @@ const validCategories = [
     'helicopters',
     'uav'
 ];
+const validCategories = categories;
+
+const specLabels = {
+    'weight': 'Вага',
+    'crew': 'Екіпаж',
+    'engine': 'Двигун',
+    'power': 'Потужність двигуна',
+    'maxSpeed': 'Макс. швидкість',
+    'caliber': 'Калібр',
+    'rateOfFire': 'Скорострільність',
+    'range': 'Дальність',
+    'guidance': 'Система наведення',
+    'armament': 'Озброєння (снаряди, ракети та ін.)',
+    'numbermissiles': 'Макс. Кількість споряджених ракет',
+    'radarRange': 'Дальність роботи РЛС',
+    'frequencyRange': 'Діапазон частот',
+    'maxHeight': 'Макс. висота цілі',
+    'maxSpeedTarget': 'Макс. швидкість цілі',
+    'typeTarget': 'Тип цілі',
+    'combatRadius': 'Бойовий радіус',
+    'radarType': 'Тип РЛС',
+    'maxCombatLoad': 'Макс. бойове навантаження'
+};
+
+const getById = id => document.getElementById(id);
 
 async function loadEquipment() {
     try {
@@ -51,7 +76,7 @@ async function loadEquipment() {
         applyUrlFilters();
     } catch (error) {
         console.error('Помилка завантаження даних:', error);
-        document.getElementById('equipmentGrid').innerHTML = '<p style="font-size: 16pt; text-align: left; color: red;">Виникла помилка :(</p>';
+        getById('equipmentGrid').innerHTML = '<p style="font-size: 16pt; text-align: left; color: red;">Виникла помилка :(</p>';
     }
 }
 
@@ -72,11 +97,15 @@ function applyUrlFilters() {
 }
 
 function renderEquipment() {
-    const grid = document.getElementById('equipmentGrid');
-    grid.innerHTML = '';
+    const grid = getById('equipmentGrid');
+    if (grid) {
+        grid.innerHTML = '';
+    }
 
     if (filteredEquipment.length === 0) {
-        grid.innerHTML = '<p style="font-size: 16pt; text-align: left; color: var(--text-muted);">Нічого не знайдено</p>';
+        if (grid) {
+            grid.innerHTML = '<p style="font-size: 16pt; text-align: left; color: var(--text-muted);">Нічого не знайдено</p>';
+        }
         return;
     }
 
@@ -154,13 +183,15 @@ function getEquipmentImages(equipment) {
 }
 
 function openModal(equipment) {
-    const modal = document.getElementById('equipmentModal');
+    const modal = getById('equipmentModal');
+    const modalTitle = getById('modalTitle');
+    const modalType = getById('modalType');
+    const manufacturerEl = getById('modalManufacturer');
 
-    document.getElementById('modalTitle').textContent = equipment.name;
-    document.getElementById('modalType').textContent = equipment.type;
+    if (modalTitle) modalTitle.textContent = equipment.name;
+    if (modalType) modalType.textContent = equipment.type;
 
-    const manufacturerEl = document.getElementById('modalManufacturer');
-    if (equipment.manufacturer) {
+    if (manufacturerEl && equipment.manufacturer) {
         const flagSrc = getCountryFlagUrl(equipment.manufacturerFlag);
         const flagHTML = flagSrc ? `<img src="${flagSrc}" alt="${equipment.manufacturer}" class="manufacturer-flag">` : '';
         manufacturerEl.innerHTML = `
@@ -215,55 +246,35 @@ function openModal(equipment) {
         `;
         }).join('');
 
-    document.getElementById('modalOperators').innerHTML = `
+    getById('modalOperators').innerHTML = `
         <div class="modal-operators-title">Оператори</div>
         <div class="modal-operators-list">
             ${operatorsHTML}
         </div>
     `;
 
-    const specsHTML = Object.entries(equipment.specs)
-        .map(([key, value]) => {
-            const labels = {
-                'weight': 'Вага',
-                'crew': 'Екіпаж',
-                'engine': 'Двигун',
-                'power': 'Потужність двигуна',
-                'maxSpeed': 'Макс. швидкість',
-                'caliber': 'Калібр',
-                'rateOfFire': 'Скорострільність',
-                'range': 'Дальність',
-                'guidance': 'Система наведення',
-                'armament': 'Озброєння (снаряди, ракети та ін.)',
-                'numbermissiles': 'Макс. Кількість споряджених ракет',
-                'radarRange': 'Дальність роботи РЛС',
-                'frequencyRange': 'Діапазон частот',
-                'maxHeight': 'Макс. висота цілі',
-                'maxSpeedTarget': 'Макс. швидкість цілі',
-                'typeTarget': 'Тип цілі',
-                'combatRadius': 'Бойовий радіус',
-                'radarType': 'Тип РЛС',
-                'maxCombatLoad': 'Макс. бойове навантаження',
-            };
-            
-            return `
+    const specsHTML = Object.entries(equipment.specs || {})
+        .map(([key, value]) => `
                 <div class="spec-item">
-                    <div class="spec-label">${labels[key] || key}</div>
+                    <div class="spec-label">${specLabels[key] || key}</div>
                     <div class="spec-value">${value}</div>
                 </div>
-            `;
-        }).join('');
+            `)
+        .join('');
 
-    document.getElementById('modalSpecs').innerHTML = specsHTML || '<p style="color: var(--text-muted);">Немає даних</p>';
+    getById('modalSpecs').innerHTML = specsHTML || '<p style="color: var(--text-muted);">Немає даних</p>';
 
-    document.getElementById('modalDescription').textContent = equipment.description;
+    getById('modalDescription').textContent = equipment.description;
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-    document.getElementById('equipmentModal').classList.remove('active');
+    const modal = getById('equipmentModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
     document.body.style.overflow = '';
 }
 
@@ -296,13 +307,11 @@ function searchEquipment(query) {
 }
 
 function updateFilterCounts() {
-    const categories = ['all', 'tanks', 'ifv', 'crv', 'apc', 'mrap', 'artillery-and-mlrs', 'srbm', 'radar', 'air-defense', 'fighters', 'strike-fighters', 'reconnaissance-aircrafts', 'transport-aircrafts', 'helicopters', 'uav'];
-    
     categories.forEach(category => {
-        const count = category === 'all' 
-            ? allEquipment.length 
+        const count = category === 'all'
+            ? allEquipment.length
             : allEquipment.filter(eq => eq.category === category).length;
-        
+
         const btn = document.querySelector(`[data-filter="${category}"]`);
         if (btn) {
             btn.textContent = btn.textContent.split('(')[0] + `(${count})`;
@@ -314,7 +323,10 @@ function updateFilterButtons() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.querySelector(`[data-filter="${currentFilter}"]`).classList.add('active');
+    const activeButton = document.querySelector(`[data-filter="${currentFilter}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -326,14 +338,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        searchEquipment(e.target.value);
-    });
+    const searchInput = getById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchEquipment(e.target.value);
+        });
+    }
 
-    document.querySelector('.modal-close').addEventListener('click', closeModal);
-    document.getElementById('equipmentModal').addEventListener('click', (e) => {
-        if (e.target.id === 'equipmentModal') {
-            closeModal();
-        }
-    });
+    const closeButton = document.querySelector('.modal-close');
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+
+    const equipmentModal = getById('equipmentModal');
+    if (equipmentModal) {
+        equipmentModal.addEventListener('click', (e) => {
+            if (e.target.id === 'equipmentModal') {
+                closeModal();
+            }
+        });
+    }
 });
